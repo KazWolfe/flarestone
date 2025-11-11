@@ -1,0 +1,33 @@
+{
+  "name": "@kazwolfe/flarestone",
+  "version": "0.3.0",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": "25.x"
+  },
+  "scripts": {
+    "clean": "rm -rf dist dist-node",
+    "build": "tsc",
+    "dev": "wrangler dev",
+    "test": "mocha --loader=ts-node/esm test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.11",
+    "htmlparser2": "^10.0.0",
+    "itty-router": "^5.0.22",
+    "reflect-metadata": "^0.2.2",
+    "xpath": "^0.0.34"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251106.1",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "latest",
+    "@types/node": "^24.10.0",
+    "chai": "^6.2.0",
+    "mocha": "latest",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3",
+    "wrangler": "^4.0.0"
+  }
+}

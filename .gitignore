@@ -1,0 +1,11 @@
+# Tooling
+.env
+.idea/
+
+# Built binaries
+node_modules/
+dist*
+
+# Don't leak Wrangler information
+.wrangler/
+wrangler.toml

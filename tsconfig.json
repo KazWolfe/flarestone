@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2022",
+    "module": "esnext",
+    "lib": ["es2022", "webworker"],
+    "strict": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist",
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/@xmldom"
+    ],
+    "baseUrl": "./src"
+  },
+  "include": [
+    "src",
+    "src/sample.ts"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

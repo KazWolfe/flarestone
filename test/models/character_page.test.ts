@@ -63,10 +63,15 @@ describe('CharacterPage', () => {
 
             Object.entries(characterPage.levels).forEach(([key, value]) => {
                 assert.typeOf(key, 'string');
-
                 assert.typeOf(value.level, 'number');
             })
-        })
+        });
+
+        it('should not include zero-level classes in levels', () => {
+            // data capture has AST and SGE at 0.
+            assert.doesNotHaveAnyKeys(characterPage.levels, ["ASTROLOGIAN", "SAGE"]);
+            assert.containsAllKeys(characterPage.levels, ["WHITE_MAGE", "SCHOLAR"]);
+        });
     });
 
     describe('A character with a private profile', () => {

@@ -38,7 +38,7 @@ export class CharacterPage implements IPage {
     @xpath("//div[@class='character__freecompany__crest']//ancestor::div[@class='character-block']")
     freeCompany!: FreeCompanyInfo;
 
-    @xpath("//p[@class='components-block__title' and text()='Race/Clan/Gender']//ancestor::div[@class='character-block']")
+    @xpath("//p[@class='character-block__title' and text()='Race/Clan/Gender']//ancestor::div[@class='character-block']")
     _rcg_info!: RaceClanGenderInfo;
 
     get race(): string {
@@ -62,7 +62,8 @@ export class CharacterPage implements IPage {
     _levels!: SlimLevel[] | undefined;
 
     get levels(): { [k: string]: SlimLevel } | undefined {
-        return this._levels?.reduce((obj, entry) => {
+        return this._levels?.filter((l) => { return l.level != 0 })
+            .reduce((obj, entry) => {
             obj[entry._key] = entry;
             return obj;
         }, {});

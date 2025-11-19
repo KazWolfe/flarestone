@@ -17,6 +17,9 @@ export enum CharacterScrapeResult {
     /** Character page returned 404 Not Found */
     NOT_FOUND = 'not_found',
 
+    /** Lodestone was under active maintenance during the last update. */
+    LODESTONE_MAINTENANCE = 'maintenance',
+
     /** Other error occurred */
     ERROR = 'error'
 }
@@ -47,11 +50,15 @@ export function detectCharacterAvailability(html: string, statusCode: number): C
     if (statusCode === 404) {
         return {resultCode: CharacterScrapeResult.NOT_FOUND, upstreamStatusCode: statusCode};
     }
+    if ((statusCode === 502 || statusCode === 503) && html.includes("The Lodestone is currently down for maintenance")) {
+        return {resultCode: CharacterScrapeResult.LODESTONE_MAINTENANCE, upstreamStatusCode: statusCode};
+    }
     if (statusCode >= 400) {
         return {resultCode: CharacterScrapeResult.ERROR, upstreamStatusCode: statusCode};
     }
 
     // Check for private profile message
+    // FIXME: A player can put this in their profile description to spoof this detection. Fix that.
     if (statusCode === 200 && html.includes("This character's profile is private")) {
         return {resultCode: CharacterScrapeResult.PROFILE_PRIVATE, upstreamStatusCode: statusCode};
     }
@@ -74,6 +81,8 @@ function getStatusCodeForAvailability(availability: CharacterScrapeResult, origi
             return 404;
         case CharacterScrapeResult.ERROR:
             return originalStatus && originalStatus >= 400 ? originalStatus : 500;
+        case CharacterScrapeResult.LODESTONE_MAINTENANCE:
+            return 503;
         default:
             return 200;
     }

@@ -3,14 +3,15 @@ import {CharacterPage} from "../models/character/overview";
 import {preSerializeFilter} from "../engine/serializer";
 import {CharacterLevelsPage} from "../models/character/levels";
 import {loadCharacterPageWithMeta} from "../transformers/character_scrape_meta";
-import {fsFetch} from "../utils/fetch";
+import {buildInit, fsFetch} from "../utils/fetch";
 import {CharacterSearchPage} from "../models/character/search";
 import {loadObjectFromUrl} from "../engine";
+import {FlarestoneRequest} from "../types/request";
 
 export default class CharacterController {
-    async getCharacter(request: IRequest): Promise<Response> {
+    async getCharacter(request: FlarestoneRequest): Promise<Response> {
         const url = `https://na.finalfantasyxiv.com/lodestone/character/${request.params.id}`;
-        const lodestoneResponse = await fsFetch(url);
+        const lodestoneResponse = await fsFetch(url, buildInit(request));
         const result = await loadCharacterPageWithMeta(lodestoneResponse, CharacterPage);
 
         const responseData = {
@@ -26,9 +27,9 @@ export default class CharacterController {
         });
     }
 
-    async getCharacterLevels(request: IRequest): Promise<Response> {
+    async getCharacterLevels(request: FlarestoneRequest): Promise<Response> {
         const url = `https://na.finalfantasyxiv.com/lodestone/character/${request.params.id}/class_job/`;
-        const lodestoneResponse = await fsFetch(url);
+        const lodestoneResponse = await fsFetch(url, buildInit(request));
         const result = await loadCharacterPageWithMeta(lodestoneResponse, CharacterLevelsPage);
 
         const responseData = {
@@ -44,10 +45,11 @@ export default class CharacterController {
         });
     }
 
-    async findCharacters(request: IRequest): Promise<Response> {
+    async findCharacters(request: FlarestoneRequest): Promise<Response> {
         const searchParams = this.buildSearchParams(request.query);
 
         const url = `https://na.finalfantasyxiv.com/lodestone/character/?${searchParams}`;
+        const requestInit = buildInit(request);
         const result = await loadObjectFromUrl(url, CharacterSearchPage);
 
         return new Response(JSON.stringify(preSerializeFilter(result)), {
@@ -56,7 +58,7 @@ export default class CharacterController {
         });
     }
 
-    private buildSearchParams(query: {[name: string]: string | string[] | undefined}): string {
+    private buildSearchParams(query: { [name: string]: string | string[] | undefined }): string {
         let searchParams: URLSearchParams = new URLSearchParams();
 
         let name = query["name"]?.toString() || "";

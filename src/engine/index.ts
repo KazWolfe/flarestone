@@ -8,8 +8,8 @@ export type { TransformOptions } from './transform_attribute';
 /**
  * Load an object from a URL by fetching HTML and parsing it
  */
-export async function loadObjectFromUrl<T>(url: string, targetClass: new () => T): Promise<T> {
-    const res = await fsFetch(url);
+export async function loadObjectFromUrl<T>(url: string, targetClass: new () => T, requestOpts?: RequestInit | undefined): Promise<T> {
+    const res = await fsFetch(url, requestOpts);
     if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
     const html = await res.text();
 

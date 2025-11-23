@@ -5,10 +5,14 @@ import {FreeCompanyMembers} from "../models/free_company/members";
 import {aggregatePages, parseAggregationParams} from "../transformers/page_aggregator";
 import {findFreeCompanyRanks, extractRanksFromPages} from "../transformers/fc_rank_extractor";
 import {preSerializeFilter} from "../engine/serializer";
+import {buildInit} from "../utils/fetch";
 
 export default class FreeCompanyController {
     async getFreeCompany(request: IRequest): Promise<Response> {
-        const chara = await loadObjectFromUrl(`https://na.finalfantasyxiv.com/lodestone/freecompany/${request.params.id}`, FreeCompany);
+        const requestOpts = buildInit(request);
+        const chara = await loadObjectFromUrl(
+            `https://na.finalfantasyxiv.com/lodestone/freecompany/${request.params.id}`,
+            FreeCompany, requestOpts);
 
         return new Response(JSON.stringify(preSerializeFilter(chara)), {
             status: 200,
@@ -32,6 +36,7 @@ export default class FreeCompanyController {
             ...(parseAggregationParams(request)),
             baseUrl: 'https://na.finalfantasyxiv.com',
             delayMs: 100, // Default to 100ms to be nice to the server
+            requestOpts: buildInit(request)
         };
 
         const result = await aggregatePages(

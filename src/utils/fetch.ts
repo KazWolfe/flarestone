@@ -1,3 +1,5 @@
+import {FlarestoneRequest} from "../types/request";
+
 const DESKTOP_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) " +
     "Chrome/141.0.0.0 Safari/537.36 (compatible; Flarestone/0.3; +https://xivauth.net/flarestone)";
 
@@ -31,4 +33,19 @@ export async function fsFetchMobile(input: string | URL | Request, init?: Reques
     }
 
     return await fetch(input, init);
+}
+
+export function buildInit(request: FlarestoneRequest, init?: RequestInit | undefined): RequestInit {
+    let headers = {
+        ...init?.headers,
+    }
+
+    if (request.user?.clientIdentifier) {
+        headers['X-Flarestone-Client'] = request.user.clientIdentifier;
+    }
+
+    return {
+        ...init,
+        headers: headers,
+    }
 }

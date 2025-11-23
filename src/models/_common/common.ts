@@ -58,3 +58,14 @@ export class MiniFreeCompanyInfo implements IComponent {
     @xpath('./span/text()')
     name!: string;
 }
+
+export class CrestComponents implements IComponent {
+    @xpath(".//img[1]/@src")
+    background!: string;
+
+    @xpath(".//img[2]/@src")
+    frame!: string;
+
+    @xpath(".//img[3]/@src")
+    symbol!: string;
+}

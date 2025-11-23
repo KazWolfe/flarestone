@@ -1,17 +1,7 @@
 import {IComponent} from "../../../parsable";
 import {xpath} from "../../../../engine/xpath_attribute";
 import {transform} from "../../../../engine";
-
-export class CrestComponents implements IComponent {
-    @xpath(".//img[1]/@src")
-    background!: string;
-
-    @xpath(".//img[2]/@src")
-    frame!: string;
-
-    @xpath(".//img[3]/@src")
-    symbol!: string;
-}
+import {CrestComponents} from "../../../_common/common";
 
 export class FreeCompanyInfo implements IComponent {
     @xpath(".//div[@class='character__freecompany__name']//a/text()")
@@ -27,4 +17,3 @@ export class FreeCompanyInfo implements IComponent {
     @xpath(".//div[@class='character__freecompany__crest__image']")
     crest!: CrestComponents;
 }
-

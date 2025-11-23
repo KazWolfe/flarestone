@@ -29,6 +29,11 @@ export interface PageAggregationOptions {
      * Defaults to 0.
      */
     delayMs?: number;
+
+    /**
+     * Fetch options to include with each request.
+     */
+    requestOpts?: RequestInit;
 }
 
 /**
@@ -91,7 +96,7 @@ export async function aggregatePages<T extends IPagedPage, TItem>(
 
     while (currentUrl && pagesFetched < maxPages && allItems.length < maxItems) {
         // Fetch and parse the current page
-        const res = await fsFetch(currentUrl);
+        const res = await fsFetch(currentUrl, options.requestOpts);
         if (!res.ok) {
             throw new Error(`Failed to fetch ${currentUrl}: ${res.status}`);
         }
@@ -139,29 +144,6 @@ export async function aggregatePages<T extends IPagedPage, TItem>(
             complete: (pagesFetched >= totalPages && finalItems.length >= allItems.length) || currentUrl === null
         }
     };
-}
-
-/**
- * A simpler version of aggregatePages that just returns the aggregated items array.
- * Useful when you don't need the metadata.
- *
- * @example
- * ```typescript
- * const allMembers = await aggregateItems(
- *   'https://na.finalfantasyxiv.com/lodestone/freecompany/123/member',
- *   FreeCompanyMembers,
- *   (page) => page.members
- * );
- * ```
- */
-export async function aggregateItems<T extends IPagedPage, TItem>(
-    initialUrl: string,
-    pageClass: new () => T,
-    itemExtractor: (page: T) => TItem[],
-    options: PageAggregationOptions = {}
-): Promise<TItem[]> {
-    const result = await aggregatePages(initialUrl, pageClass, itemExtractor, options);
-    return result.items;
 }
 
 export function parseAggregationParams(request: IRequest): PageAggregationOptions {

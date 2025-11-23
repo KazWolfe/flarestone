@@ -9,6 +9,7 @@ import {WorldInfo} from "../../_common/common";
 import {xpath} from "../../../engine/xpath_attribute";
 import {EMPTY, transform} from "../../../engine";
 import {CurrentClass} from "./components/current_class";
+import {PVPTeamInfo} from "./components/pvp_team";
 
 export class CharacterPage implements IPage {
     @xpath("//p[@class='frame__chara__name']/text()")
@@ -35,8 +36,11 @@ export class CharacterPage implements IPage {
     @xpath("//p[@class='character-block__title' and text()='Grand Company']//ancestor::div[@class='character-block']")
     grandCompany!: GrandCompanyInfo;
 
-    @xpath("//div[@class='character__freecompany__crest']//ancestor::div[@class='character-block']")
-    freeCompany!: FreeCompanyInfo;
+    @xpath("//div[@class='character__freecompany__crest']//ancestor::div[@class='character-block']", { type: () => FreeCompanyInfo })
+    freeCompany!: FreeCompanyInfo | undefined;
+
+    @xpath("//div[@class='character__pvpteam__crest']//ancestor::div[@class='character-block']", { type: () => PVPTeamInfo })
+    pvpTeam!: PVPTeamInfo | undefined;
 
     @xpath("//p[@class='character-block__title' and text()='Race/Clan/Gender']//ancestor::div[@class='character-block']")
     _rcg_info!: RaceClanGenderInfo;

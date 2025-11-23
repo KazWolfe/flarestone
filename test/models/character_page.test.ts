@@ -57,6 +57,13 @@ describe('CharacterPage', () => {
             assert.equal(characterPage.freeCompany?.id, '9231112598714485863');
         });
 
+        it('should parse PvP Team information', () => {
+            assert.ok(characterPage.pvpTeam, 'pvpTeam should be present');
+
+            assert.equal(characterPage.pvpTeam?.name, 'End Bringers');
+            assert.equal(characterPage.pvpTeam?.id, '4db96525339b69aac24329a13aaa086994bca30d');
+        });
+
         it('should extract level information', () => {
             assert.ok(characterPage.levels, 'levels should be present');
             assert.typeOf(characterPage.levels, 'object');
@@ -64,7 +71,10 @@ describe('CharacterPage', () => {
             Object.entries(characterPage.levels).forEach(([key, value]) => {
                 assert.typeOf(key, 'string');
                 assert.typeOf(value.level, 'number');
-            })
+            });
+
+            assert.equal(characterPage.levels['WHITE_MAGE'].level, 100);
+            assert.equal(characterPage.levels['SCHOLAR'].level, 100);
         });
 
         it('should not include zero-level classes in levels', () => {

@@ -29,6 +29,11 @@ export interface RankSearchOptions {
      * Default: 2
      */
     preloadPages?: number;
+
+    /**
+     * Fetch options to include with each request.
+     */
+    requestOpts?: RequestInit;
 }
 
 /**

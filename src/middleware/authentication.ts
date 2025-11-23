@@ -1,4 +1,3 @@
-import {IRequest} from "itty-router";
 import {EnvVars} from "../types/cloudflare";
 import {FlarestoneRequest} from "../types/request";
 

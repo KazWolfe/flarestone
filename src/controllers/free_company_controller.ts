@@ -1,4 +1,3 @@
-import {IRequest} from "itty-router";
 import {loadObjectFromUrl} from "../engine";
 import {FreeCompany} from "../models/free_company/overview";
 import {FreeCompanyMembers} from "../models/free_company/members";
@@ -6,9 +5,10 @@ import {aggregatePages, parseAggregationParams} from "../transformers/page_aggre
 import {findFreeCompanyRanks, extractRanksFromPages} from "../transformers/fc_rank_extractor";
 import {preSerializeFilter} from "../engine/serializer";
 import {buildInit} from "../utils/fetch";
+import {FlarestoneRequest} from "../types/request";
 
 export default class FreeCompanyController {
-    async getFreeCompany(request: IRequest): Promise<Response> {
+    async getFreeCompany(request: FlarestoneRequest): Promise<Response> {
         const requestOpts = buildInit(request);
         const chara = await loadObjectFromUrl(
             `https://na.finalfantasyxiv.com/lodestone/freecompany/${request.params.id}`,
@@ -28,7 +28,7 @@ export default class FreeCompanyController {
      * - maxPages: Maximum number of pages to fetch (e.g., ?maxPages=5)
      * - maxItems: Maximum number of items to return (e.g., ?maxItems=100)
      */
-    async getFreeCompanyMembers(request: IRequest): Promise<Response> {
+    async getFreeCompanyMembers(request: FlarestoneRequest): Promise<Response> {
         const url = `https://na.finalfantasyxiv.com/lodestone/freecompany/${request.params.id}/member`;
 
         // Parse query parameters into aggregation options
@@ -70,10 +70,11 @@ export default class FreeCompanyController {
      * Supported query parameters:
      * - delayMs: Delay between requests in milliseconds (e.g., ?delayMs=200)
      */
-    async getFreeCompanyRanks(request: IRequest): Promise<Response> {
+    async getFreeCompanyRanks(request: FlarestoneRequest): Promise<Response> {
         const result = await findFreeCompanyRanks(request.params.id, {
             baseUrl: 'https://na.finalfantasyxiv.com',
-            delayMs: 100
+            delayMs: 100,
+            requestOpts: buildInit(request)
         });
 
         return new Response(JSON.stringify({

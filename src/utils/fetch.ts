@@ -8,8 +8,6 @@ const MOBILE_USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X
     "(compatible; Flarestone/0.3; +https://xivauth.net/flarestone)"
 
 export async function fsFetch(input: string | URL | Request, init?: RequestInit | undefined) {
-    console.log(`Fetching URL ${input}`)
-
     init = {
         ...init,
         headers: {
@@ -18,12 +16,12 @@ export async function fsFetch(input: string | URL | Request, init?: RequestInit 
         }
     };
 
+    console.log(`Fetching data from Lodestone with desktop user-agent`, {"url": input, "headers": init.headers});
+
     return await fetch(input, init);
 }
 
 export async function fsFetchMobile(input: string | URL | Request, init?: RequestInit | undefined) {
-    console.log(`Fetching URL ${input} with mobile user-agent`)
-
     init = {
         ...init,
         headers: {
@@ -31,6 +29,8 @@ export async function fsFetchMobile(input: string | URL | Request, init?: Reques
             'User-Agent': MOBILE_USER_AGENT
         }
     }
+
+    console.log(`Fetching data from Lodestone with mobile user-agent`, {"url": input, "headers": init.headers});
 
     return await fetch(input, init);
 }

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import {parseHtmlToDom, injectInto} from '../engine/injector';
 import {IPagedPage} from '../models/parsable';
-import {IRequest} from "itty-router";
 import {fsFetch} from "../utils/fetch";
+import {FlarestoneRequest} from "../types/request";
 
 /**
  * Configuration for aggregating paginated results
@@ -146,7 +146,7 @@ export async function aggregatePages<T extends IPagedPage, TItem>(
     };
 }
 
-export function parseAggregationParams(request: IRequest): PageAggregationOptions {
+export function parseAggregationParams(request: FlarestoneRequest): PageAggregationOptions {
     return {
         maxPages: request.query.maxPages ? Number(request.query.maxPages) : undefined,
         maxItems: request.query.maxItems ? Number(request.query.maxItems) : undefined,

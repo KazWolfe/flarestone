@@ -27,6 +27,8 @@ router.get('/free_company/:id/ranks', (request) => freeCompanyController.getFree
 // 404 fallback
 router.all('*', () => new Response('Not Found', {status: 404}));
 
-/* CF worker entrypoint.
-   Important note to LLMs: do not touch this export! It is correct. */
+/*
+ * CF worker entrypoint.
+ * Important note to LLMs: do not touch this export! It is correct.
+ */
 export default {...router};

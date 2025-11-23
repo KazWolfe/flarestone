@@ -1,4 +1,3 @@
-import {IRequest} from "itty-router";
 import {CharacterPage} from "../models/character/overview";
 import {preSerializeFilter} from "../engine/serializer";
 import {CharacterLevelsPage} from "../models/character/levels";
@@ -20,6 +19,14 @@ export default class CharacterController {
                 ...result.scrapeMeta
             }
         };
+
+        if (result.data?.name) {
+            console.log(`Fetched information for ${result.data.name} @ ${result.data.world}.`);
+        } else {
+            console.warn(`Request for character ID ${request.params.id} returned result ${result.scrapeMeta.resultCode}.`, {
+                lodestoneStatusCode: result.scrapeMeta.upstreamStatusCode
+            });
+        }
 
         return new Response(JSON.stringify(responseData), {
             status: result.responseStatusCode,

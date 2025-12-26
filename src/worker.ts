@@ -4,9 +4,11 @@ import {CloudflareParams} from "./types/cloudflare";
 import {authenticate} from "./middleware/authentication";
 import FreeCompanyController from "./controllers/free_company_controller";
 import {FlarestoneRequest} from "./types/request";
+import WorldStatusController from "./controllers/worldstatus_controller";
 
 const characterController = new CharacterController();
 const freeCompanyController = new FreeCompanyController();
+const worldStatusController = new WorldStatusController();
 
 const router = Router<FlarestoneRequest, CloudflareParams>();
 
@@ -23,6 +25,9 @@ router.get('/character/:id/levels', (request) => characterController.getCharacte
 router.get('/free_company/:id', (request) => freeCompanyController.getFreeCompany(request));
 router.get('/free_company/:id/member', (request) => freeCompanyController.getFreeCompanyMembers(request));
 router.get('/free_company/:id/ranks', (request) => freeCompanyController.getFreeCompanyRanks(request));
+
+router.get('/worldstatus', (request) => worldStatusController.getWorldStatus(request));
+router.get('/worldstatus/flat', (request) => worldStatusController.getWorldStatusFlat(request));
 
 // 404 fallback
 router.all('*', () => new Response('Not Found', {status: 404}));

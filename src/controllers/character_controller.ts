@@ -57,7 +57,13 @@ export default class CharacterController {
 
         const url = `https://na.finalfantasyxiv.com/lodestone/character/?${searchParams}`;
         const requestInit = buildInit(request);
-        const result = await loadObjectFromUrl(url, CharacterSearchPage);
+        const result = await loadObjectFromUrl(url, CharacterSearchPage, requestInit);
+
+        // Filter out non-matches if using exact search
+        if (request.query["exact"] === "true") {
+            result.results = result.results
+                .filter(r => r.name.toLowerCase() === (request.query["name"]?.toString().toLowerCase() || ""));
+        }
 
         return new Response(JSON.stringify(preSerializeFilter(result)), {
             status: 200,

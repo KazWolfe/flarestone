@@ -1,19 +1,63 @@
-import {loadObjectFromUrl} from "../engine";
 import {CrossworldLinkshellOverview} from "../models/crossworld_linkshell/overview";
 import {CrossworldLinkshellMembers} from "../models/crossworld_linkshell/members";
 import {aggregatePages, parseAggregationParams} from "../transformers/page_aggregator";
 import {preSerializeFilter} from "../engine/serializer";
 import {buildInit} from "../utils/fetch";
+import {fsFetch} from "../utils/fetch";
 import {FlarestoneRequest} from "../types/request";
+import {parseHtmlToDom, injectInto} from "../engine/injector";
 
 export default class CrossworldLinkshellController {
     async getCrossworldLinkshell(request: FlarestoneRequest): Promise<Response> {
         const requestOpts = buildInit(request);
-        const cwls = await loadObjectFromUrl(
-            `https://na.finalfantasyxiv.com/lodestone/crossworld_linkshell/${request.params.id}`,
-            CrossworldLinkshellOverview, requestOpts);
+        const url = `https://na.finalfantasyxiv.com/lodestone/crossworld_linkshell/${request.params.id}`;
+        const fetchAllMembers = 'all_members' in request.query;
 
-        return new Response(JSON.stringify(preSerializeFilter(cwls)), {
+        // Fetch HTML once
+        const response = await fsFetch(url, requestOpts);
+        const html = await response.text();
+        const dom = parseHtmlToDom(html);
+
+        // Parse overview
+        const cwls = injectInto(dom, CrossworldLinkshellOverview);
+        const responseData: any = preSerializeFilter(cwls);
+
+        // Always include page 1 members
+        const membersPage = injectInto(dom, CrossworldLinkshellMembers);
+        const totalPages = membersPage.getTotalPages();
+        const items = [...membersPage.members];
+        let membersFetchMeta: {} = {
+            totalPages,
+            pagesFetched: 1,
+            complete: totalPages === 1
+        };
+
+        // Fetch all pages if requested
+        if (fetchAllMembers && totalPages > 1) {
+            const nextPageUrl = membersPage.getNextPageUrl();
+            const options = {
+                ...(parseAggregationParams(request)),
+                baseUrl: 'https://na.finalfantasyxiv.com',
+                delayMs: 100,
+                requestOpts: buildInit(request),
+                skippedPages: 1 // We already fetched page 1
+            };
+
+            const result = await aggregatePages(
+                nextPageUrl!,
+                CrossworldLinkshellMembers,
+                (page) => page.members,
+                options
+            );
+
+            items.push(...result.items);
+            membersFetchMeta = result.metadata;
+        }
+
+        responseData.members = preSerializeFilter(items);
+        responseData.membersMetadata = membersFetchMeta;
+
+        return new Response(JSON.stringify(responseData), {
             status: 200,
             headers: {'Content-Type': 'application/json'}
         });

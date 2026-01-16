@@ -34,6 +34,13 @@ export interface PageAggregationOptions {
      * Fetch options to include with each request.
      */
     requestOpts?: RequestInit;
+
+    /**
+     * Number of pages that were already fetched/parsed before this aggregation started.
+     * Used to calculate accurate pagesFetched metadata when starting aggregation from page 2+.
+     * Defaults to 0, internal.
+     */
+    skippedPages?: number;
 }
 
 /**
@@ -87,7 +94,7 @@ export async function aggregatePages<T extends IPagedPage, TItem>(
     itemExtractor: (page: T) => TItem[],
     options: PageAggregationOptions = {}
 ): Promise<AggregatedResult<T, TItem>> {
-    const {maxPages = Infinity, maxItems = Infinity, baseUrl, delayMs = 0} = options;
+    const {maxPages = Infinity, maxItems = Infinity, baseUrl, delayMs = 0, skippedPages = 0} = options;
 
     const pages: T[] = [];
     const allItems: TItem[] = [];
@@ -140,8 +147,8 @@ export async function aggregatePages<T extends IPagedPage, TItem>(
         pages,
         metadata: {
             totalPages,
-            pagesFetched,
-            complete: (pagesFetched >= totalPages && finalItems.length >= allItems.length) || currentUrl === null
+            pagesFetched: skippedPages + pagesFetched,
+            complete: (skippedPages + pagesFetched >= totalPages && finalItems.length >= allItems.length) || currentUrl === null
         }
     };
 }

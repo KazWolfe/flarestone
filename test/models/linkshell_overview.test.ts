@@ -22,10 +22,6 @@ describe('LinkshellOverview', () => {
             assert.equal(linkshell.name, 'Astral Nightstriders');
         });
 
-        it('should parse the icon URL', () => {
-            assert.ok(linkshell.iconUrl, 'iconUrl should be present');
-            assert.match(linkshell.iconUrl, /https:\/\/lds-img\.finalfantasyxiv\.com\/.*\.png/);
-        });
 
         it('should parse world from first member', () => {
             assert.ok(linkshell.world, 'world should be present');

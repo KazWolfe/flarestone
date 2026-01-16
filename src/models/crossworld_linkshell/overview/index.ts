@@ -1,7 +1,5 @@
 import {IPage} from "../../parsable";
 import {xpath} from "../../../engine/xpath_attribute";
-import {WorldInfo} from "../../_common/common";
-import {transform} from "../../../engine";
 
 export class CrossworldLinkshellOverview implements IPage {
     @xpath("//h3[@class='heading__linkshell__name']/text()[1]")
@@ -21,8 +19,6 @@ export class CrossworldLinkshellOverview implements IPage {
         return timestamp ? new Date(timestamp * 1000) : undefined;
     }
 
-    @xpath("//div[@class='heading__linkshell__icon']/img/@src")
-    iconUrl!: string;
 
     @xpath("//a[contains(@class, 'cf-member-link')]/@href", { default: null })
     communityFinderUrl!: string | null;

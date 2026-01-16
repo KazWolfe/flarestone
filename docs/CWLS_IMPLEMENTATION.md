@@ -21,7 +21,6 @@ Returns basic information about a Cross-world Linkshell.
 {
   "name": "Fae Hollow",
   "datacenter": "Crystal",
-  "iconUrl": "https://lds-img.finalfantasyxiv.com/...",
   "formed": "2026-12-14T03:48:13.000Z",
   "communityFinderUrl": null
 }

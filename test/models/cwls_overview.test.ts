@@ -27,10 +27,6 @@ describe('CrossworldLinkshellOverview', () => {
             assert.equal(cwls.datacenter, 'Crystal');
         });
 
-        it('should parse the icon URL', () => {
-            assert.ok(cwls.iconUrl, 'iconUrl should be present');
-            assert.match(cwls.iconUrl, /https:\/\/lds-img\.finalfantasyxiv\.com\/.*\.png/);
-        });
 
         it('should parse the formed date', () => {
             assert.ok(cwls.formed, 'formed should be present');

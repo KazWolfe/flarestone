@@ -22,7 +22,6 @@ Returns basic information about a Linkshell, including the world and datacenter 
   "name": "Astral Nightstriders",
   "world": "Golem",
   "datacenter": "Dynamis",
-  "iconUrl": "https://lds-img.finalfantasyxiv.com/...",
   "communityFinderUrl": null
 }
 ```

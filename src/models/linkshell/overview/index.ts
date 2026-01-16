@@ -5,8 +5,6 @@ export class LinkshellOverview implements IPage {
     @xpath("//h3[@class='heading__linkshell__name']/text()")
     name!: string;
 
-    @xpath("//div[@class='heading__linkshell__icon']/img/@src")
-    iconUrl!: string;
 
     @xpath("//a[contains(@class, 'cf-member-link')]/@href", { default: null })
     communityFinderUrl!: string | null;

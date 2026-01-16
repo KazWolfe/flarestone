@@ -6,11 +6,13 @@ import FreeCompanyController from "./controllers/free_company_controller";
 import {FlarestoneRequest} from "./types/request";
 import WorldStatusController from "./controllers/worldstatus_controller";
 import CrossworldLinkshellController from "./controllers/crossworld_linkshell_controller";
+import LinkshellController from "./controllers/linkshell_controller";
 
 const characterController = new CharacterController();
 const freeCompanyController = new FreeCompanyController();
 const worldStatusController = new WorldStatusController();
 const crossworldLinkshellController = new CrossworldLinkshellController();
+const linkshellController = new LinkshellController();
 
 const router = Router<FlarestoneRequest, CloudflareParams>();
 
@@ -30,6 +32,9 @@ router.get('/free_company/:id/ranks', (request) => freeCompanyController.getFree
 
 router.get('/crossworld_linkshell/:id', (request) => crossworldLinkshellController.getCrossworldLinkshell(request));
 router.get('/crossworld_linkshell/:id/member', (request) => crossworldLinkshellController.getCrossworldLinkshellMembers(request));
+
+router.get('/linkshell/:id', (request) => linkshellController.getLinkshell(request));
+router.get('/linkshell/:id/member', (request) => linkshellController.getLinkshellMembers(request));
 
 router.get('/worldstatus', (request) => worldStatusController.getWorldStatus(request));
 router.get('/worldstatus/flat', (request) => worldStatusController.getWorldStatusFlat(request));

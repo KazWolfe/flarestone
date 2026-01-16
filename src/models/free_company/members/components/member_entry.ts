@@ -1,7 +1,6 @@
 import {IComponent} from "../../../parsable";
 import {xpath} from "../../../../engine/xpath_attribute";
 import {transform} from "../../../../engine";
-import {IGrandCompanyInfo} from "../../../_common/interfaces";
 import {MiniClassJobInfo, MiniGrandCompanyInfo} from "../../../_common/common";
 
 export class RankInfo implements IComponent {
@@ -21,6 +20,10 @@ export class MemberEntry implements IComponent {
 
     @xpath(".//a[@class='entry__bg']/@href")
     lodestoneUrl!: string;
+
+    @xpath(".//a[@class='entry__bg']/@href")
+    @transform({ extractRegex: /\/character\/(\d+)/i })
+    id!: string;
 
     @xpath(".//div[@class='entry__chara__face']/img/@src")
     avatarUrl!: string;

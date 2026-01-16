@@ -7,12 +7,14 @@ import {FlarestoneRequest} from "./types/request";
 import WorldStatusController from "./controllers/worldstatus_controller";
 import CrossworldLinkshellController from "./controllers/crossworld_linkshell_controller";
 import LinkshellController from "./controllers/linkshell_controller";
+import PVPTeamController from "./controllers/pvp_team_controller";
 
 const characterController = new CharacterController();
 const freeCompanyController = new FreeCompanyController();
 const worldStatusController = new WorldStatusController();
 const crossworldLinkshellController = new CrossworldLinkshellController();
 const linkshellController = new LinkshellController();
+const pvpTeamController = new PVPTeamController();
 
 const router = Router<FlarestoneRequest, CloudflareParams>();
 
@@ -35,6 +37,8 @@ router.get('/crossworld_linkshell/:id/member', (request) => crossworldLinkshellC
 
 router.get('/linkshell/:id', (request) => linkshellController.getLinkshell(request));
 router.get('/linkshell/:id/member', (request) => linkshellController.getLinkshellMembers(request));
+
+router.get('/pvpteam/:id', (request) => pvpTeamController.getPVPTeam(request));
 
 router.get('/worldstatus', (request) => worldStatusController.getWorldStatus(request));
 router.get('/worldstatus/flat', (request) => worldStatusController.getWorldStatusFlat(request));

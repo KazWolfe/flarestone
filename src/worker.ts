@@ -29,14 +29,14 @@ router.get('/character/:id', (request) => characterController.getCharacter(reque
 router.get('/character/:id/levels', (request) => characterController.getCharacterLevels(request));
 
 router.get('/free_company/:id', (request) => freeCompanyController.getFreeCompany(request));
-router.get('/free_company/:id/member', (request) => freeCompanyController.getFreeCompanyMembers(request));
+router.get('/free_company/:id/members', (request) => freeCompanyController.getFreeCompanyMembers(request));
 router.get('/free_company/:id/ranks', (request) => freeCompanyController.getFreeCompanyRanks(request));
 
 router.get('/crossworld_linkshell/:id', (request) => crossworldLinkshellController.getCrossworldLinkshell(request));
-router.get('/crossworld_linkshell/:id/member', (request) => crossworldLinkshellController.getCrossworldLinkshellMembers(request));
+router.get('/crossworld_linkshell/:id/members', (request) => crossworldLinkshellController.getCrossworldLinkshellMembers(request));
 
 router.get('/linkshell/:id', (request) => linkshellController.getLinkshell(request));
-router.get('/linkshell/:id/member', (request) => linkshellController.getLinkshellMembers(request));
+router.get('/linkshell/:id/members', (request) => linkshellController.getLinkshellMembers(request));
 
 router.get('/pvpteam/:id', (request) => pvpTeamController.getPVPTeam(request));
 

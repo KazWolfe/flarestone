@@ -33,6 +33,14 @@ describe('LinkshellOverview', () => {
             assert.equal(linkshell.datacenter, 'Dynamis');
         });
 
+        it('should parse the owner (Master)', () => {
+            assert.ok(linkshell.owner, 'owner should be present');
+            assert.ok(linkshell.owner!.id, 'owner id should be present');
+            assert.ok(linkshell.owner!.name, 'owner name should be present');
+            assert.ok(linkshell.owner!.lodestoneUrl, 'owner lodestoneUrl should be present');
+            assert.match(linkshell.owner!.lodestoneUrl, /\/lodestone\/character\/\d+\//);
+        });
+
         it('should indicate no Community Finder recruitment', () => {
             assert.isNull(linkshell.communityFinderUrl);
         });
@@ -64,6 +72,23 @@ describe('LinkshellOverview', () => {
         it('should have a Community Finder URL', () => {
             assert.isNotNull(linkshell.communityFinderUrl);
             assert.match(linkshell.communityFinderUrl!, /\/lodestone\/community_finder\//);
+        });
+    });
+
+    describe('Linkshell last page (no owner)', () => {
+        let linkshell: LinkshellOverview;
+
+        before(async () => {
+            const fixturePath = join(__dirname, '../fixtures/linkshells/linkshell_paginated_last.html');
+            linkshell = await loadObjectFromFile(fixturePath, LinkshellOverview);
+        });
+
+        it('should parse the linkshell name', () => {
+            assert.ok(linkshell.name, 'name should be present');
+        });
+
+        it('should return undefined for owner when no Master rank exists', () => {
+            assert.isUndefined(linkshell.owner);
         });
     });
 });

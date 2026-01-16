@@ -1,5 +1,6 @@
 import {IPage} from "../../parsable";
 import {xpath} from "../../../engine/xpath_attribute";
+import {LightMemberEntry} from "../../_common/light_member_entry";
 
 export class CrossworldLinkshellOverview implements IPage {
     @xpath("//h3[@class='heading__linkshell__name']/text()[1]")
@@ -10,6 +11,9 @@ export class CrossworldLinkshellOverview implements IPage {
 
     @xpath("//span[@class='heading__cwls__formed']/script/text()")
     _formedDateScript!: string;
+
+    @xpath("//div[@class='ls__member']/div[@class='entry'][.//div[@class='entry__chara_info__linkshell']/span/text()='Master']", { default: undefined, type: () => LightMemberEntry })
+    owner?: LightMemberEntry;
 
     get formed(): Date | undefined {
         const matcher = this._formedDateScript.match(/ldst_strftime\((\d+), 'YMD'\)/);

@@ -1,13 +1,16 @@
 import {IPage} from "../../parsable";
 import {xpath} from "../../../engine/xpath_attribute";
+import {LightMemberEntry} from "../../_common/light_member_entry";
 
 export class LinkshellOverview implements IPage {
     @xpath("//h3[@class='heading__linkshell__name']/text()")
     name!: string;
 
-
     @xpath("//a[contains(@class, 'cf-member-link')]/@href", { default: null })
     communityFinderUrl!: string | null;
+
+    @xpath("//div[@class='ls__member']/div[@class='entry'][.//div[@class='entry__chara_info__linkshell']/span/text()='Master']", { default: undefined, type: () => LightMemberEntry })
+    owner?: LightMemberEntry;
 
     @xpath("//div[@class='ls__member']/div[@class='entry'][1]//p[@class='entry__world']/text()")
     _worldInfo!: string;

@@ -50,7 +50,7 @@ export function detectCharacterAvailability(html: string, statusCode: number): C
     if (statusCode === 404) {
         return {resultCode: CharacterScrapeResult.NOT_FOUND, upstreamStatusCode: statusCode};
     }
-    if ((statusCode === 502 || statusCode === 503) && html.includes("The Lodestone is currently down for maintenance")) {
+    if ((statusCode === 502 || statusCode === 503) && html.includes("Due to ongoing maintenance, this page is currently unavailable.")) {
         return {resultCode: CharacterScrapeResult.LODESTONE_MAINTENANCE, upstreamStatusCode: statusCode};
     }
     if (statusCode >= 400) {

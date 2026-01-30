@@ -52,6 +52,15 @@ describe('Character Scrape Meta', () => {
             assert.equal(meta.resultCode, CharacterScrapeResult.SUCCESS);
             assert.equal(meta.upstreamStatusCode, 200);
         });
+
+        it('should detect maintenance page as LODESTONE_MAINTENANCE', async () => {
+            const fixturePath = join(__dirname, '../fixtures/characters/maintenance.html');
+            const html = await readFile(fixturePath, 'utf-8');
+
+            const meta = detectCharacterAvailability(html, 503);
+            assert.equal(meta.resultCode, CharacterScrapeResult.LODESTONE_MAINTENANCE);
+            assert.equal(meta.upstreamStatusCode, 503);
+        });
     });
 
     describe('loadCharacterPageWithMeta', () => {

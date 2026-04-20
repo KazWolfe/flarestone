@@ -1,7 +1,7 @@
 import {CharacterPage} from "../models/character/overview";
 import {preSerializeFilter} from "../engine/serializer";
 import {CharacterLevelsPage} from "../models/character/levels";
-import {loadCharacterPageWithMeta} from "../transformers/character_scrape_meta";
+import {CharacterScrapeResult, loadCharacterPageWithMeta} from "../transformers/character_scrape_meta";
 import {buildInit, fsFetch} from "../utils/fetch";
 import {CharacterSearchPage} from "../models/character/search";
 import {loadObjectFromUrl} from "../engine";
@@ -22,9 +22,12 @@ export default class CharacterController {
 
         if (result.data?.name) {
             console.log(`Fetched information for ${result.data.name} @ ${result.data.world}.`);
+        } else if (result.scrapeMeta.resultCode != CharacterScrapeResult.ERROR) {
+            console.warn(`Request for character ID ${request.params.id} returned result ${result.scrapeMeta.resultCode}.`)
         } else {
-            console.warn(`Request for character ID ${request.params.id} returned result ${result.scrapeMeta.resultCode}.`, {
-                lodestoneStatusCode: result.scrapeMeta.upstreamStatusCode
+            console.error(`Request for character ID ${request.params.id} failed with an error.`, {
+                lodestoneStatusCode: result.scrapeMeta.upstreamStatusCode,
+                errorMessage: result.scrapeMeta.errorMessage,
             });
         }
 

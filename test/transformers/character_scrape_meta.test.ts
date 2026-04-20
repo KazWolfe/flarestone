@@ -16,22 +16,34 @@ const __dirname = dirname(__filename);
 /**
  * Helper function to create a mock Response object
  */
-function createMockResponse(body: string, statusCode: number): Response {
+function createMockResponse(body: string, statusCode: number, extraHeaders: Record<string, string> = {}): Response {
     return new Response(body, {
         status: statusCode,
         statusText: statusCode === 403 ? 'Forbidden' : statusCode === 404 ? 'Not Found' : 'OK',
         headers: {
-            'Content-Type': 'text/html; charset=utf-8'
+            'Content-Type': 'text/html; charset=utf-8',
+            ...extraHeaders
         }
     });
 }
 
 describe('Character Scrape Meta', () => {
     describe('detectCharacterAvailability', () => {
-        it('should detect 403 as CHARACTER_HIDDEN', () => {
-            const meta = detectCharacterAvailability('<html></html>', 403);
+        it('should detect Lodestone 403 as CHARACTER_HIDDEN', () => {
+            const html = "<html><body>The Lodestone. Access Restricted.</body></html>";
+            const headers = new Headers({'server': 'nginx'});
+            const meta = detectCharacterAvailability(html, 403, headers);
             assert.equal(meta.resultCode, CharacterScrapeResult.CHARACTER_HIDDEN);
             assert.equal(meta.upstreamStatusCode, 403);
+        });
+
+        it('should detect non-nginx 403 as CDN ERROR with errorMessage', () => {
+            const html = "<html><body>Forbidden</body></html>";
+            const headers = new Headers({'server': 'CloudFront'});
+            const meta = detectCharacterAvailability(html, 403, headers);
+            assert.equal(meta.resultCode, CharacterScrapeResult.ERROR);
+            assert.equal(meta.upstreamStatusCode, 403);
+            assert.equal(meta.errorMessage, 'Blocked by CDN.');
         });
 
         it('should detect 404 as NOT_FOUND', () => {
@@ -65,15 +77,26 @@ describe('Character Scrape Meta', () => {
 
     describe('loadCharacterPageWithMeta', () => {
         it('should handle 403 response with CHARACTER_HIDDEN result', async () => {
-            const fixturePath = join(__dirname, '../fixtures/characters/private_profile.html');
+            const fixturePath = join(__dirname, '../fixtures/characters/hidden.html');
             const html = await readFile(fixturePath, 'utf-8');
 
-            const mockResponse = createMockResponse(html, 403);
+            const mockResponse = createMockResponse(html, 403, {'server': 'nginx'});
             const result = await loadCharacterPageWithMeta(mockResponse, CharacterPage);
 
             assert.equal(result.responseStatusCode, 403, 'responseStatusCode should be 403');
             assert.equal(result.scrapeMeta.resultCode, CharacterScrapeResult.CHARACTER_HIDDEN, 'resultCode should be CHARACTER_HIDDEN');
             assert.equal(result.scrapeMeta.upstreamStatusCode, 403, 'upstreamStatusCode should be 403');
+        });
+
+        it('should handle CDN 403 response with ERROR result', async () => {
+            const html = '<html><body>Forbidden</body></html>';
+            const mockResponse = createMockResponse(html, 403, {'server': 'cloudflare'});
+            const result = await loadCharacterPageWithMeta(mockResponse, CharacterPage);
+
+            assert.equal(result.responseStatusCode, 403, 'responseStatusCode should be 403');
+            assert.equal(result.scrapeMeta.resultCode, CharacterScrapeResult.ERROR, 'resultCode should be ERROR');
+            assert.equal(result.scrapeMeta.upstreamStatusCode, 403, 'upstreamStatusCode should be 403');
+            assert.equal(result.scrapeMeta.errorMessage, 'Blocked by CDN.', 'errorMessage should be set');
         });
 
         it('should handle 404 response with NOT_FOUND result', async () => {

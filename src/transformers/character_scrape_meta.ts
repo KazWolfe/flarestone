@@ -27,6 +27,7 @@ export enum CharacterScrapeResult {
 export interface CharacterScrapeMeta {
     resultCode: CharacterScrapeResult;
     upstreamStatusCode?: number;
+    errorMessage?: string;
 }
 
 /**
@@ -42,9 +43,18 @@ export interface CharacterPageResult<T> {
 /**
  * Detects character availability from HTML content and HTTP status.
  */
-export function detectCharacterAvailability(html: string, statusCode: number): CharacterScrapeMeta {
+export function detectCharacterAvailability(html: string, statusCode: number, headers: Headers | null = null): CharacterScrapeMeta {
+    // Check CDN errors.
+    if (statusCode === 403 && headers?.get("server") != "nginx") {
+        return {
+            resultCode: CharacterScrapeResult.ERROR,
+            upstreamStatusCode: statusCode,
+            errorMessage: "Blocked by CDN."
+        };
+    }
+
     // Check HTTP errors first
-    if (statusCode === 403) {
+    if ((statusCode === 403) && (html.includes("Access Restricted") && html.includes("The Lodestone"))) {
         return {resultCode: CharacterScrapeResult.CHARACTER_HIDDEN, upstreamStatusCode: statusCode};
     }
     if (statusCode === 404) {
@@ -102,7 +112,7 @@ export async function loadCharacterPageWithMeta<T>(
 
     // Fetch and get HTML to check availability
     const html = await response.text();
-    const availabilityInfo = detectCharacterAvailability(html, response.status);
+    const availabilityInfo = detectCharacterAvailability(html, response.status, response.headers);
 
     // Parse the data (works even for private profiles which still have some data)
     let data: T | null = loadObjectFromString(html, targetClass);

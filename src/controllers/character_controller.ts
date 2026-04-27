@@ -25,9 +25,12 @@ export default class CharacterController {
         } else if (result.scrapeMeta.resultCode != CharacterScrapeResult.ERROR) {
             console.warn(`Request for character ID ${request.params.id} returned result ${result.scrapeMeta.resultCode}.`)
         } else {
+            const upstreamHeaders: Record<string, string> = {};
+            lodestoneResponse.headers.forEach((value, key) => { upstreamHeaders[key] = value; });
             console.error(`Request for character ID ${request.params.id} failed with an error.`, {
                 lodestoneStatusCode: result.scrapeMeta.upstreamStatusCode,
                 errorMessage: result.scrapeMeta.errorMessage,
+                upstreamHeaders: upstreamHeaders
             });
         }
 

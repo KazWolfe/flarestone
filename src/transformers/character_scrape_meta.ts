@@ -43,9 +43,13 @@ export interface CharacterPageResult<T> {
 /**
  * Detects character availability from HTML content and HTTP status.
  */
-export function detectCharacterAvailability(html: string, statusCode: number, headers: Headers | null = null): CharacterScrapeMeta {
-    // Check CDN errors.
-    if (statusCode === 403 && headers?.get("server") != "nginx") {
+export function detectCharacterAvailability(html: string, response: Response): CharacterScrapeMeta {
+    const statusCode = response.status;
+    const hasLodestoneSession = response.headers.get("set-cookie")?.includes("ldst_sess=");
+
+    // Check for a lodestone session cookie to verify if our request actually made it all the way to the backend server.
+    // We can't use the "Server" header since CloudFlare overwrites that for cache purposes.
+    if (statusCode === 403 && !hasLodestoneSession) {
         return {
             resultCode: CharacterScrapeResult.ERROR,
             upstreamStatusCode: statusCode,
@@ -53,7 +57,6 @@ export function detectCharacterAvailability(html: string, statusCode: number, he
         };
     }
 
-    // Check HTTP errors first
     if ((statusCode === 403) && (html.includes("Access Restricted") && html.includes("The Lodestone"))) {
         return {resultCode: CharacterScrapeResult.CHARACTER_HIDDEN, upstreamStatusCode: statusCode};
     }
@@ -67,9 +70,8 @@ export function detectCharacterAvailability(html: string, statusCode: number, he
         return {resultCode: CharacterScrapeResult.ERROR, upstreamStatusCode: statusCode};
     }
 
-    // Check for private profile message
-    // FIXME: A player can put this in their profile description to spoof this detection. Fix that.
-    if (statusCode === 200 && html.includes("This character's profile is private")) {
+    // Check for private profile message. Match on full(er) HTML to prevent users from injecting this.
+    if (statusCode === 200 && html.includes('<p class="parts__zero">This character\'s profile is private.</p>')) {
         return {resultCode: CharacterScrapeResult.PROFILE_PRIVATE, upstreamStatusCode: statusCode};
     }
 
@@ -112,7 +114,7 @@ export async function loadCharacterPageWithMeta<T>(
 
     // Fetch and get HTML to check availability
     const html = await response.text();
-    const availabilityInfo = detectCharacterAvailability(html, response.status, response.headers);
+    const availabilityInfo = detectCharacterAvailability(html, response);
 
     // Parse the data (works even for private profiles which still have some data)
     let data: T | null = loadObjectFromString(html, targetClass);

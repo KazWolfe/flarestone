@@ -6,17 +6,32 @@ import {findFreeCompanyRanks, extractRanksFromPages} from "../transformers/fc_ra
 import {preSerializeFilter} from "../engine/serializer";
 import {buildInit} from "../utils/fetch";
 import {FlarestoneRequest} from "../types/request";
+import {EnvVars} from "../types/cloudflare";
+import {cacheHeaders, getCached, putCached, shouldBypassCache} from "../cache";
+import {kvCache} from "../settings";
 
 export default class FreeCompanyController {
-    async getFreeCompany(request: FlarestoneRequest): Promise<Response> {
+    async getFreeCompany(request: FlarestoneRequest, env: EnvVars): Promise<Response> {
+        const cacheKey = `free_company:${request.params.id}`;
+
+        if (!shouldBypassCache(request)) {
+            const cached = await getCached(kvCache(env), cacheKey);
+            if (cached) return cached;
+        }
+
         const requestOpts = buildInit(request);
         const chara = await loadObjectFromUrl(
             `https://na.finalfantasyxiv.com/lodestone/freecompany/${request.params.id}`,
             FreeCompany, requestOpts);
 
-        return new Response(JSON.stringify(preSerializeFilter(chara)), {
+        const body = JSON.stringify(preSerializeFilter(chara));
+        const TTL = 86400;
+        const now = Date.now();
+        await putCached(kvCache(env), cacheKey, body, TTL);
+
+        return new Response(body, {
             status: 200,
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json', ...cacheHeaders(now, TTL), 'X-Flarestone-Cache': 'MISS'},
         });
     }
 

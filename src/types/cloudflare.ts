@@ -1,7 +1,9 @@
-import { ExecutionContext } from '@cloudflare/workers-types';
+import { D1Database, ExecutionContext, KVNamespace } from '@cloudflare/workers-types';
 
 export type EnvVars = {
-    API_KEYS: string;
+    db: D1Database;
+    kv_cache: KVNamespace;
+    SKIP_AUTH?: string;
 }
 
 export type CloudflareParams = [EnvVars, ExecutionContext];

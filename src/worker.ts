@@ -25,10 +25,10 @@ router.get("/", async () => {
 router.all('*', (request: IRequest, env) => authenticate(request, env));
 
 router.get('/character/search', async (request) => characterController.findCharacters(request));
-router.get('/character/:id', (request) => characterController.getCharacter(request));
-router.get('/character/:id/levels', (request) => characterController.getCharacterLevels(request));
+router.get('/character/:id', (request, env) => characterController.getCharacter(request, env));
+router.get('/character/:id/levels', (request, env) => characterController.getCharacterLevels(request, env));
 
-router.get('/free_company/:id', (request) => freeCompanyController.getFreeCompany(request));
+router.get('/free_company/:id', (request, env) => freeCompanyController.getFreeCompany(request, env));
 router.get('/free_company/:id/members', (request) => freeCompanyController.getFreeCompanyMembers(request));
 router.get('/free_company/:id/ranks', (request) => freeCompanyController.getFreeCompanyRanks(request));
 
@@ -40,8 +40,8 @@ router.get('/linkshell/:id/members', (request) => linkshellController.getLinkshe
 
 router.get('/pvpteam/:id', (request) => pvpTeamController.getPVPTeam(request));
 
-router.get('/worldstatus', (request) => worldStatusController.getWorldStatus(request));
-router.get('/worldstatus/flat', (request) => worldStatusController.getWorldStatusFlat(request));
+router.get('/worldstatus', (request, env) => worldStatusController.getWorldStatus(request, env));
+router.get('/worldstatus/flat', (request, env) => worldStatusController.getWorldStatusFlat(request, env));
 
 // 404 fallback
 router.all('*', () => new Response('Not Found', {status: 404}));

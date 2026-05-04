@@ -6,9 +6,19 @@ import {buildInit, fsFetch} from "../utils/fetch";
 import {CharacterSearchPage} from "../models/character/search";
 import {loadObjectFromUrl} from "../engine";
 import {FlarestoneRequest} from "../types/request";
+import {EnvVars} from "../types/cloudflare";
+import {cacheHeaders, getCached, putCached, shouldBypassCache} from "../cache";
+import {kvCache} from "../settings";
 
 export default class CharacterController {
-    async getCharacter(request: FlarestoneRequest): Promise<Response> {
+    async getCharacter(request: FlarestoneRequest, env: EnvVars): Promise<Response> {
+        const cacheKey = `character:overview:${request.params.id}`;
+
+        if (!shouldBypassCache(request)) {
+            const cached = await getCached(kvCache(env), cacheKey);
+            if (cached) return cached;
+        }
+
         const url = `https://na.finalfantasyxiv.com/lodestone/character/${request.params.id}`;
         const lodestoneResponse = await fsFetch(url, buildInit(request));
         const result = await loadCharacterPageWithMeta(lodestoneResponse, CharacterPage);
@@ -34,13 +44,27 @@ export default class CharacterController {
             });
         }
 
-        return new Response(JSON.stringify(responseData), {
-            status: result.responseStatusCode,
-            headers: {'Content-Type': 'application/json'}
-        });
+        const body = JSON.stringify(responseData);
+        const TTL = 86400;
+
+        const headers: Record<string, string> = {'Content-Type': 'application/json'};
+        if (result.responseStatusCode === 200) {
+            const now = Date.now();
+            await putCached(kvCache(env), cacheKey, body, TTL);
+            Object.assign(headers, cacheHeaders(now, TTL), {'X-Flarestone-Cache': 'MISS'});
+        }
+
+        return new Response(body, {status: result.responseStatusCode, headers});
     }
 
-    async getCharacterLevels(request: FlarestoneRequest): Promise<Response> {
+    async getCharacterLevels(request: FlarestoneRequest, env: EnvVars): Promise<Response> {
+        const cacheKey = `character:levels:${request.params.id}`;
+
+        if (!shouldBypassCache(request)) {
+            const cached = await getCached(kvCache(env), cacheKey);
+            if (cached) return cached;
+        }
+
         const url = `https://na.finalfantasyxiv.com/lodestone/character/${request.params.id}/class_job/`;
         const lodestoneResponse = await fsFetch(url, buildInit(request));
         const result = await loadCharacterPageWithMeta(lodestoneResponse, CharacterLevelsPage);
@@ -52,10 +76,17 @@ export default class CharacterController {
             }
         };
 
-        return new Response(JSON.stringify(responseData), {
-            status: result.responseStatusCode,
-            headers: {'Content-Type': 'application/json'}
-        });
+        const body = JSON.stringify(responseData);
+        const TTL = 3600;
+
+        const headers: Record<string, string> = {'Content-Type': 'application/json'};
+        if (result.responseStatusCode === 200) {
+            const now = Date.now();
+            await putCached(kvCache(env), cacheKey, body, TTL);
+            Object.assign(headers, cacheHeaders(now, TTL), {'X-Flarestone-Cache': 'MISS'});
+        }
+
+        return new Response(body, {status: result.responseStatusCode, headers});
     }
 
     async findCharacters(request: FlarestoneRequest): Promise<Response> {

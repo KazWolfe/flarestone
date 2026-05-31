@@ -3,12 +3,18 @@
 > [!WARNING]
 > Flarestone is, at least, an experiment to learn about AI and other things, because despite my best efforts, it's
 > something I can no longer avoid. As such, expect a lot of rough edges and not-particularly-great looking code.
+> 
+> This project is at [AI Declaration Level](https://dalamud.dev/plugin-publishing/ai-policy) **Copilot**, meaning that a
+> highly supervised LLM was responsible for writing most of the logic in this project. Nearly any architectural decision
+> (good or bad), structural choices, and design goals can still be blamed on me. Likewise, I have personally reviewed,
+> tested, and made changes to schemas and data formats (as well as creating XPath expressions) to ensure that the output
+> format is something I am happy with and makes sense for my use case.
 
 Flarestone is a Lodestone scraper built to run on Cloudflare Workers. It fetches and transforms data from Lodestone into
 a (slightly) more accessible JSON document. Instead of using CSS selectors like other Lodestone scrapers, Flarestone 
 uses XPath for element targeting and manipulation.
 
-Flarestone was primarily built for [XIVAuth](https://github.com/kazwolfe/xivauth), and has made certain implementation
+Flarestone was primarily built for [XIVAuth](https://github.com/xivauth/xivauth), and has made certain implementation
 decisions to make it most useful to XIVAuth. However, it can be self-hosted and used for other projects freely.
 
 ## Feature Set
@@ -23,12 +29,12 @@ Flarestone currently supports the following features:
 
 ## Why Flarestone?
 
-Not much. Nodestone and other applications do their jobs perfectly well. I wanted something that could run on Cloudflare
+While Nodestone and other applications do their jobs perfectly well, I wanted something that could run on Cloudflare
 Workers and that leveraged XPath, since I consider them to be more capable for web scraping. I also wasn't particularly
 a fan of how other Lodestone scrapers structured their data, so Flarestone was born.
 
 There's not really a single solid (compelling) reason to use Flarestone over other applications, and I don't expect it
-to somehow replace other Lodestone scrapers. It's just another option.
+to somehow replace other Lodestone scrapers. 
 
 ## Model Declaration
 

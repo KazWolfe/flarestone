@@ -31,15 +31,15 @@ describe('Character Scrape Meta', () => {
     describe('detectCharacterAvailability', () => {
         it('should detect Lodestone 403 as CHARACTER_HIDDEN', () => {
             const html = "<html><body>The Lodestone. Access Restricted.</body></html>";
-            const response = createMockResponse(html, 403, {'set-cookie': 'ldst_sess=abc123; Path=/'});
+            const response = createMockResponse(html, 403);
             const meta = detectCharacterAvailability(html, response);
             assert.equal(meta.resultCode, CharacterScrapeResult.CHARACTER_HIDDEN);
             assert.equal(meta.upstreamStatusCode, 403);
         });
 
-        it('should detect 403 without ldst_sess cookie as CDN ERROR with errorMessage', () => {
+        it('should detect 403 without text/html content-type as CDN ERROR with errorMessage', () => {
             const html = "<html><body>Forbidden</body></html>";
-            const response = createMockResponse(html, 403);
+            const response = createMockResponse(html, 403, {'Content-Type': 'application/json'});
             const meta = detectCharacterAvailability(html, response);
             assert.equal(meta.resultCode, CharacterScrapeResult.ERROR);
             assert.equal(meta.upstreamStatusCode, 403);
@@ -84,7 +84,7 @@ describe('Character Scrape Meta', () => {
             const fixturePath = join(__dirname, '../fixtures/characters/hidden.html');
             const html = await readFile(fixturePath, 'utf-8');
 
-            const mockResponse = createMockResponse(html, 403, {'set-cookie': 'ldst_sess=abc123; Path=/'});
+            const mockResponse = createMockResponse(html, 403);
             const result = await loadCharacterPageWithMeta(mockResponse, CharacterPage);
 
             assert.equal(result.responseStatusCode, 403, 'responseStatusCode should be 403');
@@ -94,7 +94,7 @@ describe('Character Scrape Meta', () => {
 
         it('should handle CDN 403 response with ERROR result', async () => {
             const html = '<html><body>Forbidden</body></html>';
-            const mockResponse = createMockResponse(html, 403);
+            const mockResponse = createMockResponse(html, 403, {'Content-Type': 'application/json'});
             const result = await loadCharacterPageWithMeta(mockResponse, CharacterPage);
 
             assert.equal(result.responseStatusCode, 403, 'responseStatusCode should be 403');

@@ -45,11 +45,11 @@ export interface CharacterPageResult<T> {
  */
 export function detectCharacterAvailability(html: string, response: Response): CharacterScrapeMeta {
     const statusCode = response.status;
-    const hasLodestoneSession = response.headers.get("set-cookie")?.includes("ldst_sess=");
+    const isHtmlResponse = response.headers.get("content-type")?.includes("text/html");
 
-    // Check for a lodestone session cookie to verify if our request actually made it all the way to the backend server.
+    // Check for HTML content-type to verify our request made it to the backend server.
     // We can't use the "Server" header since CloudFlare overwrites that for cache purposes.
-    if (statusCode === 403 && !hasLodestoneSession) {
+    if (statusCode === 403 && !isHtmlResponse) {
         return {
             resultCode: CharacterScrapeResult.ERROR,
             upstreamStatusCode: statusCode,

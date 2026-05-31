@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "es2022",
     "module": "esnext",
     "lib": ["es2022", "webworker"],
@@ -14,13 +14,14 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "rootDir": "./src",
     "declarationDir": "dist/types",
     "outDir": "dist",
+    "types": ["node"],
     "typeRoots": [
       "node_modules/@types",
       "node_modules/@xmldom"
-    ],
-    "baseUrl": "./src"
+    ]
   },
   "include": [
     "src",

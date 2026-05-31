@@ -28,14 +28,12 @@ export function parseHtmlToDom(html: string): Document {
 
     // Now parse with xmldom for XPath support
     const domParser = new DOMParser({
-        errorHandler: {
-            warning: () => {},
-            error: () => {},
-            fatalError: (err) => { throw new Error(err); }
+        errorHandler: (level, msg) => {
+            if (level === 'fatalError') throw new Error(msg);
         }
     });
 
-    return domParser.parseFromString(xmlString, 'text/xml');
+    return domParser.parseFromString(xmlString, 'text/xml') as unknown as Document;
 }
 
 /**
@@ -66,8 +64,7 @@ function domToXmlString(nodes: ChildNode[]): string {
 
             // Handle void/self-closing HTML elements
             if (voidElements.has(tagName)) {
-                // For void elements, just close the tag (HTML style, not XML style)
-                result += '>';
+                result += '/>';
             } else if (!elem.children || elem.children.length === 0) {
                 // For empty non-void elements, use proper closing tag
                 result += `></${elem.name}>`;

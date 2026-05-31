@@ -4,11 +4,11 @@
 > Flarestone is, at least, an experiment to learn about AI and other things, because despite my best efforts, it's
 > something I can no longer avoid. As such, expect a lot of rough edges and not-particularly-great looking code.
 > 
-> This project is at [AI Declaration Level](https://dalamud.dev/plugin-publishing/ai-policy) **Copilot**, meaning that a
-> highly supervised LLM was responsible for writing most of the logic in this project. Nearly any architectural decision
-> (good or bad), structural choices, and design goals can still be blamed on me. Likewise, I have personally reviewed,
-> tested, and made changes to schemas and data formats (as well as creating XPath expressions) to ensure that the output
-> format is something I am happy with and makes sense for my use case.
+> This project is at [AI Declaration](https://ai-declaration.md/) level **Copilot**, meaning that a highly supervised
+> LLM was responsible for writing most of the logic in this project. Nearly any architectural decision (good or bad),
+> structural choices, and design goals can still be blamed on me. Likewise, I have personally reviewed, tested, and made
+> changes to schemas and data formats (as well as creating XPath expressions) to ensure that the output format is 
+> something I am happy with and makes sense for my use case.
 
 Flarestone is a Lodestone scraper built to run on Cloudflare Workers. It fetches and transforms data from Lodestone into
 a (slightly) more accessible JSON document. Instead of using CSS selectors like other Lodestone scrapers, Flarestone 

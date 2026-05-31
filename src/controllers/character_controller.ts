@@ -108,6 +108,17 @@ export default class CharacterController {
         });
     }
 
+    async proxyCharacterHtml(request: FlarestoneRequest, env: EnvVars): Promise<Response> {
+        const url = `https://na.finalfantasyxiv.com/lodestone/character/${request.params.id}`;
+
+        if (!shouldBypassCache(request)) {
+            // Only available to users with cache bypass permissions.
+            return new Response('Unauthorized', {status: 401});
+        }
+
+        return await fsFetch(url, buildInit(request));
+    }
+
     private buildSearchParams(query: { [name: string]: string | string[] | undefined }): string {
         let searchParams: URLSearchParams = new URLSearchParams();
 

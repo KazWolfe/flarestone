@@ -9,3 +9,4 @@ dist*
 # Don't leak Wrangler information
 .wrangler/
 wrangler.toml
+.*.vars

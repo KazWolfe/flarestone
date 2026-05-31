@@ -27,6 +27,7 @@ router.all('*', (request: IRequest, env) => authenticate(request, env));
 router.get('/character/search', async (request) => characterController.findCharacters(request));
 router.get('/character/:id', (request, env) => characterController.getCharacter(request, env));
 router.get('/character/:id/levels', (request, env) => characterController.getCharacterLevels(request, env));
+router.get('/character/:id/proxy_html', (request, env) => characterController.proxyCharacterHtml(request, env));
 
 router.get('/free_company/:id', (request, env) => freeCompanyController.getFreeCompany(request, env));
 router.get('/free_company/:id/members', (request) => freeCompanyController.getFreeCompanyMembers(request));
